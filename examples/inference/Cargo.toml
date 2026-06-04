@@ -1,0 +1,16 @@
+[package]
+name = "inference"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = { workspace = true }
+anyhow = { workspace = true }
+async-trait = { workspace = true }
+tracing = { workspace = true }
+rsa = { workspace = true }
+sha2 = { workspace = true }
+serde = { workspace = true }
+bincode = { workspace = true }
+x25519-dalek = { workspace = true }
+chacha20poly1305 = { workspace = true }
