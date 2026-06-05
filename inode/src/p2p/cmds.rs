@@ -117,9 +117,7 @@ pub async fn handle_cmd(line: &str, inode: &Arc<InferenceNode>) -> Result<()> {
 
         "peers" => {
             let gpeers = inode.p2p.get_peers().await;
-            gpeers
-                .iter()
-                .for_each(|peer| println!("{}", peer.to_string()));
+            gpeers.iter().for_each(|peer| println!("{}", peer));
         }
 
         "mesh" => {

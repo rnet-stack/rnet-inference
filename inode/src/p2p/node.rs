@@ -133,6 +133,8 @@ impl InferenceNode {
                             }
                         }
                     }
+
+                    FloodsubMsgType::Subscribe => {}
                     _ => {}
                 },
                 GlobalEvent::Ping(event) => debug!("{:?}", event),
