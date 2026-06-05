@@ -19,6 +19,7 @@ pub const PROVIDER_MESH: &str = "swarm/mesh";
 
 pub struct InferenceNode {
     pub p2p: Arc<Node>,
+
     pub mode: Mode,
     pub local: Multiaddr,
 
@@ -169,7 +170,7 @@ impl InferenceNode {
         // Wait 2 seconds for the new node to settle down
         tokio::time::sleep(Duration::from_secs(2)).await;
 
-        debug!("BOOTMESH updated");
+        debug!("BOOTMESH");
 
         self.p2p
             .floodsub_publish(PROVIDER_MESH.to_string(), payload)

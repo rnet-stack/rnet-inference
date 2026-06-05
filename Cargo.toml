@@ -1,5 +1,5 @@
 [workspace]
-members = ["examples/raw", "examples/agentic", "core"]
+members = ["examples/raw", "examples/agentic", "inode"]
 
 
 resolver = "2"
