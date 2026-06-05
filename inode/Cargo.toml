@@ -1,0 +1,21 @@
+[package]
+name = "inode"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rnet-p2p = { workspace = true }
+
+tokio = { workspace = true }
+anyhow = { workspace = true }
+async-trait = { workspace = true }
+tracing = { workspace = true }
+rsa = { workspace = true }
+sha2 = { workspace = true }
+serde = { workspace = true }
+bincode = { workspace = true }
+x25519-dalek = { workspace = true }
+chacha20poly1305 = { workspace = true }
+dotenvy = { workspace = true }
+rand = { workspace = true }
+hex = { workspace = true }
