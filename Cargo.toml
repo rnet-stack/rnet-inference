@@ -1,5 +1,5 @@
 [workspace]
-members = ["examples/inference", "core"]
+members = ["examples/raw", "examples/agentic", "core"]
 
 
 resolver = "2"
@@ -9,6 +9,7 @@ rust-version = "1.90.0"
 edition = "2021"
 
 [workspace.dependencies]
+rnet-p2p = { git = "https://github.com/rnet-stack/rnet-p2p.git" }
 tokio = { version = "1", features = ["full"] }
 anyhow = "1"
 async-trait = "0.1"
@@ -23,6 +24,8 @@ unsigned-varint = "0.7"
 prost = "0.13"
 x25519-dalek = "2"
 chacha20poly1305 = { version = "0.10.1" }
+dotenvy = "0.15.7"
+rand = "0.10.1"
 
 [workspace.lints]
 clippy.pedantic = { level = "allow", priority = -1 }
