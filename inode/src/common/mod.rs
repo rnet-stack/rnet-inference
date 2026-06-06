@@ -22,3 +22,14 @@ pub fn generate_entropy() -> (String, String) {
 
     (secret, hash)
 }
+
+pub fn random_split(v: Vec<String>) -> (Vec<String>, Vec<String>) {
+    assert!(v.len() >= 2, "Vector must contain at least 2 elements");
+
+    let split_idx = rand::rng().random_range(1..v.len());
+
+    let left = v[..split_idx].to_vec();
+    let right = v[split_idx..].to_vec();
+
+    (left, right)
+}

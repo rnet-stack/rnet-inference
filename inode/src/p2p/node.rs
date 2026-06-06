@@ -13,7 +13,10 @@ use tokio::sync::{mpsc::Receiver, Mutex};
 use tracing::{debug, info};
 
 use crate::{
-    p2p::types::{IMsgType, Mode},
+    p2p::{
+        service::IService,
+        types::{IMsgType, Mode},
+    },
     slm::core::SlmClient,
 };
 
@@ -22,7 +25,7 @@ pub const PROVIDER_MESH: &str = "swarm/mesh";
 
 pub struct InferenceNode {
     pub p2p: Arc<Node>,
-    pub slm: SlmClient,
+    pub service: IService,
 
     pub mode: Mode,
     pub local: Multiaddr,
@@ -62,12 +65,18 @@ impl InferenceNode {
             }
         };
 
+        let bootmesh = Arc::new(Mutex::new(HashMap::new()));
         let inode = Arc::new(InferenceNode {
             p2p: p2p_tx.clone(),
-            slm: SlmClient::new("http://localhost:11434".to_string()),
+            service: IService::new(
+                listen_addr.to_string(),
+                p2p_tx.clone(),
+                SlmClient::new("http://localhost:11434".to_string()),
+                bootmesh.clone(),
+            ),
             mode,
             local: listen_addr,
-            bootmesh: Arc::new(Mutex::new(HashMap::new())),
+            bootmesh,
         });
 
         let events = inode.clone();
@@ -117,6 +126,10 @@ impl InferenceNode {
             let notification = event_rx.recv().await.unwrap();
             let decoded = bincode::deserialize::<GlobalEvent>(&notification).unwrap();
 
+            if self.mode == Mode::Bootstrap {
+                continue;
+            }
+
             match decoded {
                 GlobalEvent::Floodsub(event) => match event.msg_type {
                     FloodsubMsgType::Publish => {
@@ -129,7 +142,10 @@ impl InferenceNode {
                             IMsgType::General(msg) => {
                                 debug!("FloodsubEvent: {topic} - {source}: {msg}")
                             }
-                            IMsgType::Service(_payload) => {}
+                            IMsgType::Service(ipayload) => {
+                                self.service.handle_incoming(ipayload).await.unwrap()
+                            }
+
                             IMsgType::Bootmesh(mesh) => {
                                 let mut bootmesh = self.bootmesh.lock().await;
                                 *bootmesh = mesh;
@@ -157,7 +173,7 @@ impl InferenceNode {
             let latest_mesh = self.p2p.floodsub_mesh().await.unwrap_or(HashMap::new());
 
             if bootmesh == latest_mesh {
-                tokio::time::sleep(Duration::from_secs(1)).await;
+                tokio::time::sleep(Duration::from_millis(300)).await;
                 continue;
             }
 

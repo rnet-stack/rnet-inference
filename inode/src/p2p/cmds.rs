@@ -30,6 +30,8 @@ const COMMANDS: &[&str] = &[
     "mesh                       => map of topics -> peer",
     "\n",
     "slm                        => converse with the AI",
+    "adv <topic>                => advertize a exec/verify session",
+    "finalize <topic>           => finalize the winner response",
 ];
 
 pub fn print_commands() {
@@ -133,8 +135,27 @@ pub async fn handle_cmd(line: &str, inode: &Arc<InferenceNode>) -> Result<()> {
         "slm" => {
             let prompt = parts.collect::<Vec<_>>().join(" ");
 
-            let res = inode.slm.converse(prompt.as_ref()).await.unwrap();
+            let res = inode.service.slm.converse(prompt.as_ref()).await.unwrap();
             println!("{}", res);
+        }
+
+        "adv" => {
+            let topic = parts.next().unwrap().to_string();
+            inode.service.adv(topic.clone(), None).await.unwrap();
+
+            tokio::time::sleep(Duration::from_secs(1)).await;
+
+            let prompt = "Hey hows it going, let have somemfun talk about decentralized computaion, say when a distributed swarm of LLMs".to_string();
+            inode
+                .service
+                .ack(topic.clone(), None, Some(prompt))
+                .await
+                .unwrap();
+        }
+
+        "finalize" => {
+            let topic = parts.next().unwrap().to_string();
+            inode.service.finalize(None, Some(topic)).await.unwrap();
         }
 
         _ => println!("Unknown command"),
