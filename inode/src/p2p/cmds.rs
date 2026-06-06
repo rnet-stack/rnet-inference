@@ -29,6 +29,7 @@ const COMMANDS: &[&str] = &[
     "bootmesh                   => map of topics -> peer (BOOTSTRAP)",
     "mesh                       => map of topics -> peer",
     "\n",
+    "slm                        => converse with the AI",
 ];
 
 pub fn print_commands() {
@@ -127,6 +128,13 @@ pub async fn handle_cmd(line: &str, inode: &Arc<InferenceNode>) -> Result<()> {
                 println!("- {}", topic);
                 peers.iter().for_each(|peer| println!("  - {}", peer));
             });
+        }
+
+        "slm" => {
+            let prompt = parts.collect::<Vec<_>>().join(" ");
+
+            let res = inode.slm.converse(prompt.as_ref()).await.unwrap();
+            println!("{}", res);
         }
 
         _ => println!("Unknown command"),

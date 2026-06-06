@@ -12,13 +12,17 @@ use std::{collections::HashMap, env, sync::Arc, time::Duration};
 use tokio::sync::{mpsc::Receiver, Mutex};
 use tracing::{debug, info};
 
-use crate::p2p::types::{IMsgType, Mode};
+use crate::{
+    p2p::types::{IMsgType, Mode},
+    slm::core::SlmClient,
+};
 
 pub type BOOTMESH = Arc<Mutex<HashMap<String, Vec<String>>>>;
 pub const PROVIDER_MESH: &str = "swarm/mesh";
 
 pub struct InferenceNode {
     pub p2p: Arc<Node>,
+    pub slm: SlmClient,
 
     pub mode: Mode,
     pub local: Multiaddr,
@@ -60,6 +64,7 @@ impl InferenceNode {
 
         let inode = Arc::new(InferenceNode {
             p2p: p2p_tx.clone(),
+            slm: SlmClient::new("http://localhost:11434".to_string()),
             mode,
             local: listen_addr,
             bootmesh: Arc::new(Mutex::new(HashMap::new())),
