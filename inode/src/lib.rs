@@ -1,3 +1,4 @@
 pub mod agent;
 pub mod common;
 pub mod p2p;
+pub mod slm;

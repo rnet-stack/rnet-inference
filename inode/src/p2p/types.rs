@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::p2p::service::IPayload;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Mode {
     Provider,
     Bootstrap,

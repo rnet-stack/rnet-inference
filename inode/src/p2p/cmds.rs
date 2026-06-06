@@ -29,6 +29,12 @@ const COMMANDS: &[&str] = &[
     "bootmesh                   => map of topics -> peer (BOOTSTRAP)",
     "mesh                       => map of topics -> peer",
     "\n",
+    "slm                        => converse with the AI",
+    "adv <topic>                => advertize a exec/verify session",
+    "ack <topic>                => acknowlege the EXECS/VERIFIERS",
+    "finalize <topic>           => finalize the winner response",
+    "\n",
+    "pipe <privider_count>      => Test out the automated pipeline",
 ];
 
 pub fn print_commands() {
@@ -127,6 +133,40 @@ pub async fn handle_cmd(line: &str, inode: &Arc<InferenceNode>) -> Result<()> {
                 println!("- {}", topic);
                 peers.iter().for_each(|peer| println!("  - {}", peer));
             });
+        }
+
+        "slm" => {
+            let prompt = parts.collect::<Vec<_>>().join(" ");
+
+            let res = inode.service.slm.converse(prompt.as_ref()).await.unwrap();
+            println!("{}", res);
+        }
+
+        "adv" => {
+            let topic = parts.next().unwrap().to_string();
+            inode.service.adv(topic.clone(), None).await.unwrap();
+        }
+
+        "ack" => {
+            let topic = parts.next().unwrap().to_string();
+            let prompt = "Hey hows it going, let have somemfun talk about decentralized computaion, say when a distributed swarm of LLMs".to_string();
+            inode
+                .service
+                .ack(topic.clone(), None, Some(prompt))
+                .await
+                .unwrap();
+        }
+
+        "finalize" => {
+            let topic = parts.next().unwrap().to_string();
+            inode.service.finalize(None, Some(topic)).await.unwrap();
+        }
+
+        "pipe" => {
+            let provider_count: usize = parts.next().unwrap().to_string().parse().unwrap();
+            let winner = inode.service.pipeline(provider_count).await;
+
+            println!("Winner:\n{:?}", winner);
         }
 
         _ => println!("Unknown command"),

@@ -1,7 +1,6 @@
-use std::io::{self, Write};
-
 use anyhow::Result;
 use inode::p2p::{cmds::io_loop, node::InferenceNode, types::Mode};
+use std::env;
 use tracing_subscriber::EnvFilter;
 
 #[tokio::main]
@@ -15,16 +14,25 @@ async fn main() -> Result<()> {
 
     dotenvy::dotenv().ok();
 
-    print!("Intiate at BOOTSTRAP node (Y/n): ");
-    io::stdout().flush().unwrap();
+    let mut mode = Mode::Provider;
+    let args = env::args().skip(1);
 
-    let mut io = String::new();
-    io::stdin().read_line(&mut io).unwrap();
-
-    let mut mode = Mode::Bootstrap;
-    if io.trim().to_lowercase() != "" {
-        mode = Mode::Provider;
+    for arg in args {
+        if arg == "bootstrap" {
+            mode = Mode::Bootstrap;
+        }
     }
+
+    // print!("Intiate at BOOTSTRAP node (Y/n): ");
+    // io::stdout().flush().unwrap();
+
+    // let mut io = String::new();
+    // io::stdin().read_line(&mut io).unwrap();
+
+    // let mut mode = Mode::Bootstrap;
+    // if io.trim().to_lowercase() != "" {
+    //     mode = Mode::Provider;
+    // }
 
     let inode = InferenceNode::new(mode).await;
     io_loop(inode).await.unwrap();
