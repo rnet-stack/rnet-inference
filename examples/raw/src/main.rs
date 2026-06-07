@@ -15,9 +15,9 @@ async fn main() -> Result<()> {
     dotenvy::dotenv().ok();
 
     let mut mode = Mode::Provider;
-    let mut args = env::args().skip(1);
+    let args = env::args().skip(1);
 
-    while let Some(arg) = args.next() {
+    for arg in args {
         if arg == "bootstrap" {
             mode = Mode::Bootstrap;
         }

@@ -149,8 +149,6 @@ impl InferenceNode {
                             IMsgType::Bootmesh(mesh) => {
                                 let mut bootmesh = self.bootmesh.lock().await;
                                 *bootmesh = mesh;
-
-                                debug!("BOOTMESH");
                             }
                         }
                     }
@@ -192,8 +190,6 @@ impl InferenceNode {
 
         // Wait 2 seconds for the new node to settle down
         tokio::time::sleep(Duration::from_secs(2)).await;
-
-        debug!("BOOTMESH");
 
         self.p2p
             .floodsub_publish(PROVIDER_MESH.to_string(), payload)

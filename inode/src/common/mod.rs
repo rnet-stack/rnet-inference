@@ -23,6 +23,16 @@ pub fn generate_entropy() -> (String, String) {
     (secret, hash)
 }
 
+pub fn generate_random() -> String {
+    let secret: String = rng()
+        .sample_iter(&Alphanumeric)
+        .take(7)
+        .map(char::from)
+        .collect();
+
+    secret
+}
+
 pub fn random_split(v: Vec<String>) -> (Vec<String>, Vec<String>) {
     assert!(v.len() >= 2, "Vector must contain at least 2 elements");
 
@@ -32,4 +42,14 @@ pub fn random_split(v: Vec<String>) -> (Vec<String>, Vec<String>) {
     let right = v[split_idx..].to_vec();
 
     (left, right)
+}
+
+pub fn last_n_chars(s: &str, n: usize) -> String {
+    s.chars()
+        .rev()
+        .take(n)
+        .collect::<Vec<_>>()
+        .into_iter()
+        .rev()
+        .collect()
 }
