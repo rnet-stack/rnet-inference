@@ -23,17 +23,6 @@ async fn main() -> Result<()> {
         }
     }
 
-    // print!("Intiate at BOOTSTRAP node (Y/n): ");
-    // io::stdout().flush().unwrap();
-
-    // let mut io = String::new();
-    // io::stdin().read_line(&mut io).unwrap();
-
-    // let mut mode = Mode::Bootstrap;
-    // if io.trim().to_lowercase() != "" {
-    //     mode = Mode::Provider;
-    // }
-
     let inode = InferenceNode::new(mode).await;
     io_loop(inode).await.unwrap();
 
